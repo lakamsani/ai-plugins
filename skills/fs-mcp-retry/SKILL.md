@@ -21,11 +21,11 @@ Activate when:
 
 | Host | Config location | Format |
 |------|----------------|--------|
+| Claude Code | `~/.claude.json` | JSON — `mcpServers` |
 | Gemini CLI | `~/.gemini/settings.json` | JSON — `mcpServers` |
-| Claude Code | project `.mcp.json` or settings | JSON — `mcpServers` |
 | Codex | `~/.codex/config.toml` | TOML — `mcp_servers` |
 
-The script auto-detects the config format. Pass `--config` to override.
+The script auto-detects by checking configs in the order above (first match wins). Pass `--config` to override.
 
 ## Workflow
 
@@ -45,7 +45,7 @@ python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py <alias> --force
 
 ## Usage Examples
 
-### Auto-detect config (tries ~/.gemini/settings.json, then ~/.codex/config.toml)
+### Auto-detect config (tries ~/.claude.json, ~/.gemini/settings.json, ~/.codex/config.toml)
 ```bash
 python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py vamsee-fs-mcp-remote --force
 ```
