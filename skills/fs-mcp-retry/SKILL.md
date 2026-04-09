@@ -1,42 +1,79 @@
 ---
 name: fs-mcp-retry
-description: Retry a request against a configured MCP alias after refreshing OAuth tokens from ~/.mcp-auth when the first attempt fails with an auth error.
+description: >
+  Retry a request against a configured MCP alias after refreshing OAuth tokens from ~/.mcp-auth.
+  Supports Gemini CLI (~/.gemini/settings.json), Claude Code, and Codex (~/.codex/config.toml).
+  Use when an MCP tool call fails with an auth or expired token error.
 ---
 
 # FS MCP Retry
 
-Use this skill when a request should be sent through an MCP alias and retried once after an OAuth token refresh.
+Retry MCP requests after automatically refreshing expired OAuth tokens. Works across multiple AI agent hosts.
 
-This is intended for hosts that can:
-- call MCP tools bound to a configured alias
-- run a local helper script
-- retry the original request after a failed auth attempt
+## When to Use
 
-## Inputs
+Activate when:
+- An MCP tool call fails with an authentication or expired token error
+- The user asks to refresh OAuth tokens for an MCP alias
+- The user asks to retry a failed MCP request
 
-Treat the first token as the MCP alias. Treat the remaining text as the request to send through that alias.
+## Supported Hosts
 
-Example:
+| Host | Config location | Format |
+|------|----------------|--------|
+| Gemini CLI | `~/.gemini/settings.json` | JSON — `mcpServers` |
+| Claude Code | project `.mcp.json` or settings | JSON — `mcpServers` |
+| Codex | `~/.codex/config.toml` | TOML — `mcp_servers` |
 
-```text
-vamsee-fs-remote fetch tickets
-```
+The script auto-detects the config format. Pass `--config` to override.
 
 ## Workflow
 
 1. Parse the first token as the MCP alias.
 2. Treat the remaining text as the query.
-3. Resolve the alias from the local MCP config.
+3. Resolve the alias from the local MCP config (auto-detected or specified).
 4. Infer the tool namespace as `mcp__<alias with '-' replaced by '_'>__*`.
 5. Execute the request once.
 6. If the request fails because of authentication or expired tokens, run:
 
 ```bash
-python3 scripts/refresh_mcp_oauth.py <alias> --force
+python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py <alias> --force
 ```
 
 7. Retry the original request once.
 8. Report whether a refresh was needed.
+
+## Usage Examples
+
+### Auto-detect config (tries ~/.gemini/settings.json, then ~/.codex/config.toml)
+```bash
+python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py vamsee-fs-mcp-remote --force
+```
+
+### Gemini CLI (explicit)
+```bash
+python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py fs-remote --force \
+  --config ~/.gemini/settings.json
+```
+
+### Codex (explicit)
+```bash
+python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py vamsee-fs-remote --force \
+  --config ~/.codex/config.toml
+```
+
+### Claude Code
+
+Claude Code users install this as a plugin:
+
+```bash
+claude plugin marketplace add lakamsani/ai-plugins
+claude plugin install fs-mcp-retry@ai-plugins
+```
+
+Once installed, the skill activates automatically when an MCP tool call fails with an auth error. Claude Code will run the refresh script and retry the request.
+
+To manually trigger from within a Claude Code session, describe the MCP alias and the failed request — the skill instructions guide the agent through the retry workflow.
 
 ## Rules
 
@@ -46,14 +83,10 @@ python3 scripts/refresh_mcp_oauth.py <alias> --force
 - Retry at most once.
 - Surface refresh failures directly.
 
-## Portability
-
-The helper script defaults to Codex locations:
-- config: `~/.codex/config.toml`
-- auth cache: `~/.mcp-auth`
-
-Override these when a different host stores MCP config elsewhere:
+## Config Override
 
 ```bash
-python3 scripts/refresh_mcp_oauth.py <alias> --force --config /path/to/config.toml --auth-root /path/to/.mcp-auth
+python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py <alias> --force \
+  --config /path/to/config.json \
+  --auth-root /path/to/.mcp-auth
 ```

@@ -1,45 +1,33 @@
-# Claude Packaging Notes
+# Multi-Host Integration Notes
 
-This repo packages `fs-mcp-retry` as an Agent Skills spec skill instead of a Codex-only plugin.
+## Claude Code
 
-## Why
+```bash
+claude plugin marketplace add lakamsani/ai-plugins
+claude plugin install fs-mcp-retry@ai-plugins
+```
 
-- Claude can consume repo-installed skills more directly than Codex plugin manifests.
-- The reusable part of this package is the refresh helper script plus the workflow instructions.
-- Codex-specific files such as `.codex-plugin/plugin.json` and command markdown are not portable to Claude.
+After installing, run `/reload-plugins` to activate. The skill fires automatically when an MCP tool call fails with an auth/token error.
+
+## Gemini CLI
+
+Gemini reads MCP servers from `~/.gemini/settings.json` under the `mcpServers` key. The refresh script auto-detects this as the first config to check.
+
+## Config Discovery Order
+
+The script checks for configs in this order (first match wins):
+1. `~/.gemini/settings.json` (JSON, `mcpServers`)
+2. `~/.codex/config.toml` (TOML, `mcp_servers`)
+
+Override with `--config /path/to/config.json` for any other location.
+
+## Token Storage
+
+All hosts share `~/.mcp-auth/` for OAuth token bundles (managed by `mcp-remote`). The refresh script updates tokens in place so they're immediately available to any host.
 
 ## Expected Host Capabilities
 
 The host should be able to:
-
-- parse the first token as an MCP alias
-- invoke MCP tools for that alias
-- run `python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py <alias> --force`
-- retry the original MCP request once
-
-## Config Assumptions
-
-By default the helper script uses:
-
-- `~/.codex/config.toml`
-- `~/.mcp-auth`
-
-If Claude stores MCP config elsewhere, pass overrides:
-
-```bash
-python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py \
-  vamsee-fs-remote \
-  --force \
-  --config /path/to/config.toml \
-  --auth-root /path/to/.mcp-auth
-```
-
-## Suggested Claude Wrapper
-
-Use a Claude command or local instruction that says:
-
-1. Parse the first token as the MCP alias.
-2. Execute the request once.
-3. If the error indicates expired or invalid OAuth access, run the helper script.
-4. Retry once.
-5. Report whether a refresh was needed.
+- Invoke MCP tools for a configured alias
+- Run `python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py <alias> --force`
+- Retry the original MCP request once

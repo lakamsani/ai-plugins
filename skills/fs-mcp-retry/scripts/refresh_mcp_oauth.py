@@ -13,24 +13,50 @@ from pathlib import Path
 try:
     import tomllib
 except ModuleNotFoundError:
-    print("python 3.11+ is required for tomllib", file=sys.stderr)
-    sys.exit(2)
+    tomllib = None
 
 
-DEFAULT_CONFIG_PATH = Path.home() / ".codex" / "config.toml"
 DEFAULT_AUTH_ROOT = Path.home() / ".mcp-auth"
+
+# Config search order: first match wins
+CONFIG_SEARCH_PATHS = [
+    Path.home() / ".gemini" / "settings.json",
+    Path.home() / ".codex" / "config.toml",
+]
+
+
+def find_default_config():
+    """Auto-discover the first existing MCP config file."""
+    for p in CONFIG_SEARCH_PATHS:
+        if p.exists():
+            return p
+    return CONFIG_SEARCH_PATHS[0]  # fall back to first for error message
 
 
 def load_config(config_path):
-    with config_path.open("rb") as f:
-        return tomllib.load(f)
+    """Load config from TOML (Codex) or JSON (Gemini/Claude Code) based on extension."""
+    suffix = config_path.suffix.lower()
+    if suffix == ".toml":
+        if tomllib is None:
+            print("python 3.11+ is required for TOML config files", file=sys.stderr)
+            sys.exit(2)
+        with config_path.open("rb") as f:
+            raw = tomllib.load(f)
+        # Normalize: Codex uses mcp_servers, return under canonical key
+        return {"mcpServers": raw.get("mcp_servers", {})}
+    else:
+        with config_path.open("r", encoding="utf-8") as f:
+            raw = json.load(f)
+        # JSON configs (Gemini, Claude Code) use mcpServers
+        return {"mcpServers": raw.get("mcpServers", {})}
 
 
 def resolve_server(config, alias):
-    servers = config.get("mcp_servers", {})
+    servers = config.get("mcpServers", {})
     server = servers.get(alias)
     if not server:
-        raise ValueError(f"unknown MCP server alias: {alias}")
+        available = ", ".join(sorted(servers.keys())) or "(none)"
+        raise ValueError(f"unknown MCP server alias: {alias}  (available: {available})")
     return server
 
 
@@ -53,7 +79,7 @@ def extract_authorize_resource(server):
 
 
 def extract_headers(config, alias):
-    server = (config.get("mcp_servers", {}) or {}).get(alias, {})
+    server = (config.get("mcpServers", {}) or {}).get(alias, {})
     headers = server.get("http_headers") or {}
     return dict(sorted(headers.items())) if isinstance(headers, dict) else {}
 
@@ -130,8 +156,8 @@ def main():
     parser.add_argument(
         "--config",
         type=Path,
-        default=DEFAULT_CONFIG_PATH,
-        help=f"path to MCP config file (default: {DEFAULT_CONFIG_PATH})",
+        default=None,
+        help="path to MCP config file (default: auto-detect from ~/.gemini/settings.json or ~/.codex/config.toml)",
     )
     parser.add_argument(
         "--auth-root",
@@ -142,7 +168,8 @@ def main():
     args = parser.parse_args()
 
     try:
-        config = load_config(args.config)
+        config_path = args.config or find_default_config()
+        config = load_config(config_path)
         server = resolve_server(config, args.alias)
         server_url = extract_server_url(server)
         authorize_resource = extract_authorize_resource(server)
@@ -166,7 +193,7 @@ def main():
 
         result = {
             "alias": args.alias,
-            "config_path": str(args.config),
+            "config_path": str(config_path),
             "server_url": server_url,
             "server_hash": server_hash,
             "auth_dir": str(auth_dir),
