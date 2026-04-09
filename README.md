@@ -101,10 +101,7 @@ ai-plugins/
    {
      "name": "my-plugin-name",
      "description": "Short description.",
-     "source": {
-       "type": "skill",
-       "path": "./skills/my-plugin-name"
-     }
+     "source": "./skills/my-plugin-name"
    }
    ```
 

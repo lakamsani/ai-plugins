@@ -13,10 +13,7 @@
     {
       "name": "fs-mcp-retry",
       "description": "Retry an MCP alias request after refreshing OAuth tokens from ~/.mcp-auth.",
-      "source": {
-        "type": "skill",
-        "path": "./skills/fs-mcp-retry"
-      }
+      "source": "./skills/fs-mcp-retry"
     }
   ]
 }
