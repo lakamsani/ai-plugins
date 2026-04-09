@@ -9,7 +9,7 @@ A marketplace of AI agent skills and plugins for Claude Code and other AI coding
 npx skills add lakamsani/ai-plugins
 
 # Install a specific skill
-npx skills add https://github.com/lakamsani/ai-plugins/tree/main/skills/freshservice-ops
+npx skills add https://github.com/lakamsani/ai-plugins/tree/main/skills/<skill-name>
 
 # Install globally (available in all projects)
 npx skills add -g lakamsani/ai-plugins
@@ -17,34 +17,22 @@ npx skills add -g lakamsani/ai-plugins
 
 ## Available Skills
 
-| Skill | Description |
-|-------|-------------|
-| [freshservice-ops](skills/freshservice-ops/) | Freshservice ticket, asset, and service catalog operations via MCP |
-| [freshrelease-pm](skills/freshrelease-pm/) | Freshrelease project management — sprints, epics, tasks, and test cases |
-| [databricks-analytics](skills/databricks-analytics/) | Query and explore Databricks warehouses via Baikal MCP |
-| [pr-review](skills/pr-review/) | Structured pull request review with security, performance, and correctness checks |
-| [mcp-builder](skills/mcp-builder/) | Scaffold and test new MCP server integrations |
+_No skills published yet._
 
 ## Repo Layout
 
 ```
 ai-plugins/
 ├── skills/                    # Primary skills directory (npx skills scans here)
-│   ├── freshservice-ops/
-│   │   └── SKILL.md
-│   ├── freshrelease-pm/
-│   │   └── SKILL.md
-│   ├── databricks-analytics/
-│   │   └── SKILL.md
-│   ├── pr-review/
-│   │   └── SKILL.md
-│   └── mcp-builder/
-│       ├── SKILL.md
-│       └── references/
+│   └── <skill-name>/
+│       ├── SKILL.md           # Required: YAML frontmatter + instructions
+│       ├── scripts/           # Optional: executable code
+│       ├── references/        # Optional: additional docs
+│       └── assets/            # Optional: templates, data files
 ├── .claude-plugin/
 │   └── marketplace.json       # Claude Code plugin marketplace manifest
 ├── .claude/
-│   └── skills/                # Claude-native skills path (symlink targets)
+│   └── skills/                # Claude-native skills path
 ├── .agents/
 │   └── skills/                # Agent-agnostic canonical path
 └── README.md
