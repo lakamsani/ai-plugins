@@ -21,6 +21,7 @@ DEFAULT_AUTH_ROOT = Path.home() / ".mcp-auth"
 # Config search order: first match wins
 CONFIG_SEARCH_PATHS = [
     Path.home() / ".claude.json",
+    Path.home() / ".cursor" / "mcp.json",
     Path.home() / ".gemini" / "settings.json",
     Path.home() / ".codex" / "config.toml",
 ]

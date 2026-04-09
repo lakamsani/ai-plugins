@@ -17,8 +17,9 @@ Gemini reads MCP servers from `~/.gemini/settings.json` under the `mcpServers` k
 
 The script checks for configs in this order (first match wins):
 1. `~/.claude.json` (JSON, `mcpServers`) — **used when running from Claude Code**
-2. `~/.gemini/settings.json` (JSON, `mcpServers`)
-3. `~/.codex/config.toml` (TOML, `mcp_servers`)
+2. `~/.cursor/mcp.json` (JSON, `mcpServers`) — **used when running from Cursor**
+3. `~/.gemini/settings.json` (JSON, `mcpServers`)
+4. `~/.codex/config.toml` (TOML, `mcp_servers`)
 
 Override with `--config /path/to/config.json` for any other location.
 
