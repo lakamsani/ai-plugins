@@ -9,5 +9,14 @@
     "version": "1.0.0",
     "repository": "https://github.com/lakamsani/ai-plugins"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "fs-mcp-retry",
+      "description": "Retry an MCP alias request after refreshing OAuth tokens from ~/.mcp-auth.",
+      "source": {
+        "type": "skill",
+        "path": "./skills/fs-mcp-retry"
+      }
+    }
+  ]
 }
