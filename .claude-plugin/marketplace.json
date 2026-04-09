@@ -1,0 +1,43 @@
+{
+  "name": "ai-plugins",
+  "owner": {
+    "name": "Vamsee Lakamsani",
+    "email": "vamsee.lakamsani@freshworks.com"
+  },
+  "metadata": {
+    "description": "AI agent skills and plugins for ITSM, project management, analytics, and developer workflows",
+    "version": "1.0.0",
+    "repository": "https://github.com/lakamsani/ai-plugins"
+  },
+  "plugins": [
+    {
+      "name": "freshworks-ops",
+      "description": "Freshworks ITSM and project management skills for Freshservice and Freshrelease",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/freshservice-ops",
+        "./skills/freshrelease-pm"
+      ]
+    },
+    {
+      "name": "analytics",
+      "description": "Data analytics and warehouse querying via Databricks/Baikal",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/databricks-analytics"
+      ]
+    },
+    {
+      "name": "developer-tools",
+      "description": "Code review and MCP server development tools",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/pr-review",
+        "./skills/mcp-builder"
+      ]
+    }
+  ]
+}
