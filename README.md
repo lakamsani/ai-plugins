@@ -37,6 +37,7 @@ npx skills add -g lakamsani/ai-plugins
 | Plugin | Description |
 |--------|-------------|
 | **[fs-mcp-retry](./skills/fs-mcp-retry)** | Retry MCP requests after refreshing OAuth tokens from `~/.mcp-auth`. |
+| **[x-twitter-scraper](./skills/x-twitter-scraper)** | Use Xquik for X/Twitter data retrieval, media download, monitors, and confirmation-gated posting workflows. |
 
 ## How Plugins Work
 
@@ -130,6 +131,15 @@ The helper script is portable across hosts because it accepts explicit config ov
 python3 skills/fs-mcp-retry/scripts/refresh_mcp_oauth.py <alias> --force \
   --config /path/to/config.toml \
   --auth-root /path/to/.mcp-auth
+```
+
+### `x-twitter-scraper`
+
+Xquik API workflow for X/Twitter data retrieval, media download, monitors, and confirmation-gated posting.
+
+```text
+skills/x-twitter-scraper/
+    SKILL.md
 ```
 
 ## Compatibility

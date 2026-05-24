@@ -14,6 +14,11 @@
       "name": "fs-mcp-retry",
       "description": "Retry an MCP alias request after refreshing OAuth tokens from ~/.mcp-auth.",
       "source": "./skills/fs-mcp-retry"
+    },
+    {
+      "name": "x-twitter-scraper",
+      "description": "Use Xquik for X/Twitter data retrieval, media download, monitors, and confirmation-gated posting workflows.",
+      "source": "./skills/x-twitter-scraper"
     }
   ]
 }
