@@ -37,6 +37,7 @@ npx skills add -g lakamsani/ai-plugins
 | Plugin | Description |
 |--------|-------------|
 | **[fs-mcp-retry](./skills/fs-mcp-retry)** | Retry MCP requests after refreshing OAuth tokens from `~/.mcp-auth`. |
+| **[hermes-tweet](./skills/hermes-tweet)** | Install, validate, and safely route Hermes Agent X/Twitter explore, read, and explicit action workflows. |
 
 ## How Plugins Work
 

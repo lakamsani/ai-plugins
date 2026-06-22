@@ -14,6 +14,11 @@
       "name": "fs-mcp-retry",
       "description": "Retry an MCP alias request after refreshing OAuth tokens from ~/.mcp-auth.",
       "source": "./skills/fs-mcp-retry"
+    },
+    {
+      "name": "hermes-tweet",
+      "description": "Install, validate, and safely route Hermes Agent X/Twitter explore, read, and explicit action workflows.",
+      "source": "./skills/hermes-tweet"
     }
   ]
 }
